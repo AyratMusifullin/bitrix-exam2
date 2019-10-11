@@ -7,3 +7,4 @@
  */
 
 $MESS['SET_SPECIALDATE'] = "Set page property specialdate";
+$MESS['IB_CANONICAL_ID'] = "ID IBLOCK rel=canonical";
