@@ -7,3 +7,4 @@
  */
 
 $MESS['SET_SPECIALDATE'] = "Установить свойство страницы specialdate";
+$MESS['IB_CANONICAL_ID'] = "ID информационного блока для rel=canonical";

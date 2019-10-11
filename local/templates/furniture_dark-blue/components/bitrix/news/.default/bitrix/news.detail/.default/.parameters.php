@@ -22,5 +22,10 @@ $arTemplateParameters = array(
 		"TYPE" => "CHECKBOX",
 		"DEFAULT" => "Y",
 	),
+	"IB_CANONICAL_ID" => Array(
+		"NAME" => GetMessage("IB_CANONICAL_ID"),
+		"TYPE" => "STRING",
+		"DEFAULT" => "N",
+	),
 );
 ?>
