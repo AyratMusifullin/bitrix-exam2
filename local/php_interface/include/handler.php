@@ -1,5 +1,6 @@
 <?php
 AddEventHandler("iblock", "OnBeforeIBlockElementUpdate", Array("OnIBlock", "OnBeforeIBlockElementUpdateHandler"));
+AddEventHandler("main", "OnEpilog", Array("OnEpilog", "OnEpilogHandler"));
 
 class OnIBlock
 {
@@ -14,6 +15,23 @@ class OnIBlock
                     return false;
                 }
             }
+        }
+    }
+}
+
+class OnEpilog
+{
+    function OnEpilogHandler()
+    {
+        if (defined("ERROR_404") && ERROR_404 == "Y") {
+            global $APPLICATION;
+            $page = $APPLICATION->GetCurPage();
+            CEventLog::Add(array(
+                "SEVERITY" => "INFO",
+                "AUDIT_TYPE_ID" => "ERROR_404",
+                "MODULE_ID" => "main",
+                "DESCRIPTION" => $page
+            ));
         }
     }
 }
