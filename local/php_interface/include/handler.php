@@ -1,6 +1,7 @@
 <?php
 AddEventHandler("iblock", "OnBeforeIBlockElementUpdate", Array("OnIBlock", "OnBeforeIBlockElementUpdateHandler"));
 AddEventHandler("main", "OnEpilog", Array("OnEpilog", "OnEpilogHandler"));
+AddEventHandler("main", "OnBeforeEventAdd", Array("onEvent", "OnBeforeEventAddHandler"));
 
 class OnIBlock
 {
@@ -31,6 +32,32 @@ class OnEpilog
                 "AUDIT_TYPE_ID" => "ERROR_404",
                 "MODULE_ID" => "main",
                 "DESCRIPTION" => $page
+            ));
+        }
+    }
+}
+
+class onEvent
+{
+    function OnBeforeEventAddHandler(&$event, &$lid, &$arFields)
+    {
+        if ($event == "FEEDBACK_FORM") {
+            global $USER;
+            if ($USER->IsAuthorized()) {
+                $userID = $USER->GetID();
+                $rsUser = CUser::GetByID($userID);
+                if ($arUser = $rsUser->Fetch()) {
+                    $arFields["AUTHOR"] = "Пользователь авторизован: " . $arUser['ID'] . " (" . $arUser['LOGIN'] . ") " . $arUser['NAME'] . ", данные из формы: " . $arFields['AUTHOR'];
+                }
+            } else {
+                $arFields["AUTHOR"] = "Пользователь не авторизован, данные из формы: " . $arFields['AUTHOR'];
+            }
+
+            CEventLog::Add(array(
+                "SEVERITY" => "INFO",
+                "AUDIT_TYPE_ID" => "FEEDBACK_FORM",
+                "MODULE_ID" => "main",
+                "DESCRIPTION" => "Замена данных в отсылаемом письме – " . $arFields["AUTHOR"]
             ));
         }
     }
