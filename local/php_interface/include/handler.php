@@ -1,6 +1,7 @@
 <?php
 AddEventHandler("iblock", "OnBeforeIBlockElementUpdate", Array("OnIBlock", "OnBeforeIBlockElementUpdateHandler"));
 AddEventHandler("main", "OnEpilog", Array("OnEpilog", "OnEpilogHandler"));
+AddEventHandler("main", "OnEpilog", Array("OnEpilog", "OnEpilogSEOHandler"));
 AddEventHandler("main", "OnBeforeEventAdd", Array("onEvent", "OnBeforeEventAddHandler"));
 AddEventHandler("main", "OnBuildGlobalMenu", Array("onAdminPanel", "OnBuildGlobalMenuHandler"));
 
@@ -34,6 +35,29 @@ class OnEpilog
                 "MODULE_ID" => "main",
                 "DESCRIPTION" => $page
             ));
+        }
+    }
+
+    function OnEpilogSEOHandler()
+    {
+        if (CModule::IncludeModule('iblock')) {
+            global $APPLICATION;
+            $page = $APPLICATION->GetCurPage();
+            $arSelect = Array(
+                "ID",
+                "NAME",
+                "PROPERTY_TITLE",
+                "PROPERTY_DESCRIPTION",
+            );
+            $arFilter = Array(
+                "IBLOCK_ID" => IBLOCK_METATAG_ID,
+                "NAME" => $page
+            );
+            $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+            if ($ob = $res->Fetch()) {
+                $APPLICATION->SetPageProperty("title", $ob["PROPERTY_TITLE_VALUE"]);
+                $APPLICATION->SetPageProperty("description", $ob["PROPERTY_DESCRIPTION_VALUE"]);
+            }
         }
     }
 }
