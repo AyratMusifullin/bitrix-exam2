@@ -2,6 +2,7 @@
 AddEventHandler("iblock", "OnBeforeIBlockElementUpdate", Array("OnIBlock", "OnBeforeIBlockElementUpdateHandler"));
 AddEventHandler("main", "OnEpilog", Array("OnEpilog", "OnEpilogHandler"));
 AddEventHandler("main", "OnBeforeEventAdd", Array("onEvent", "OnBeforeEventAddHandler"));
+AddEventHandler("main", "OnBuildGlobalMenu", Array("onAdminPanel", "OnBuildGlobalMenuHandler"));
 
 class OnIBlock
 {
@@ -59,6 +60,29 @@ class onEvent
                 "MODULE_ID" => "main",
                 "DESCRIPTION" => "Замена данных в отсылаемом письме – " . $arFields["AUTHOR"]
             ));
+        }
+    }
+}
+
+class onAdminPanel
+{
+    function OnBuildGlobalMenuHandler(&$aGlobalMenu, &$aModuleMenu)
+    {
+        global $USER;
+        if (!$USER->IsAdmin()) {
+            if (CSite::InGroup(array(GR_CONTENT_MANAGER))) {
+                foreach ($aGlobalMenu as $code => $menu) {
+                    if ($menu['items_id'] != "global_menu_content") {
+                        unset($aGlobalMenu[$code]);
+                    }
+                }
+
+                foreach ($aModuleMenu as $code => $menu) {
+                    if ($menu["items_id"] != "menu_iblock_/news") {
+                        unset($aModuleMenu[$code]);
+                    }
+                }
+            }
         }
     }
 }
